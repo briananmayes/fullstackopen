@@ -102,3 +102,11 @@ dist
 
 # TernJS port file
 .tern-port
+
+#part1 - practice
+part1/public/
+part1/src/
+part1/package.json
+part1/package-lock.json
+part2/public/
+part2/src/
