@@ -1,8 +1,11 @@
-const Persons = ({persons}) => {
-    console.log(persons);
-    return persons.map((person) => {
-      return <p key={person.name}>{person.name} {person.number}</p>
-    })
-  }
+import Person from "./Person";
 
-  export default Persons;
+const Persons = ({persons, deletePerson}) => {
+    return (
+        persons.map((person) => {
+            return <Person key={person.id} person={person} deletePerson={deletePerson}/>
+        })
+    )
+}
+
+export default Persons;

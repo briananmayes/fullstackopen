@@ -1,36 +1,77 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import personService from './services/persons' 
 import Persons from './Persons';
 import Filter from './Filter';
 import PersonForm from './PersonForm';
+import Notification from './Notification';
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    {name: 'Arto Hellas',
-     number: '000-123-4567',
-    id: 1 },
-    {name: 'Alba Jennings',
-  number: '111-234-7865',
-id: 2},
-{name: 'John Hopkins',
-number: '999-111-2829',
-id: 3},
-{name: 'Jack L',
-number: '987-102-9302',
-id: 4}
-  ]);
+  //pieces of state
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [ filterBy, setFilterBy ] = useState('');
+  const [errScssMsg, setErrScssMsg] = useState('');
 
+  //effect hook to handle data fetching from json-server
+  useEffect(() => {
+    console.log('effect');
+    personService.getPersons()
+    .then(initialPersons => {
+      console.log(initialPersons)
+      setPersons(initialPersons)
+    })
+    .catch(error => {
+      setErrScssMsg('Unable to get phonebook list from server...');
+      setTimeout(() => {
+        setErrScssMsg(null)}, 3000)
+    });
+  }, [])
+
+  // method for adding a person to the phonebook
   const addPerson = (event) => {
-    event.preventDefault();
+    //prevent the default action of a form submission
+    event.preventDefault(); 
+
+    //if this person already exists in the phonebook, prompt the user if they want to update the number
     if(persons.filter(person => person.name === newName).length > 0) {
-      alert(`${newName} is already added to phonebook`);
+      if(window.confirm(`${newName} is already added to phonebook, do you want to update the number?`)){
+        const person = persons.find(person => person.name === newName);
+        const id = person.id;
+        const changedPerson = {...person, number: newNumber};
+
+        // the service call which handles the HTTP put request to update a persons information
+        personService.updatePersonsNumber(id, changedPerson)
+        .then(returnedPerson => setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        )
+        .catch(error => {
+          setErrScssMsg(`${newName} has already been removed from the phonebook.`);
+        setTimeout(() => {
+          setErrScssMsg(null)
+        }, 3000)
+        setPersons(persons.filter(person => person.id !== id));
+        });
+      }
     }
     else{
-      setPersons(persons.concat({name: newName, number: newNumber}));
+      personService.createPerson({name: newName, number: newNumber})
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson));
+        setErrScssMsg(`Added ${newName} to phonebook`);
+        setTimeout(() => {
+          setErrScssMsg(null)
+        }, 3000)
+      });
+
 
     }
+  }
+
+  const removePerson = (id, name) => {
+    if(window.confirm(`Delete ${name}?`)) {
+    personService.deletePerson(id)
+    .then(() => setPersons(persons.filter(person => person.id !== id)))
+    };
   }
 
   const handleNameChange = (event) => {
@@ -51,18 +92,19 @@ id: 4}
 
   return (
     <div>
-      <h2>
+    <Notification message={errScssMsg} name={newName} />
+      <h1>
         Phonebook
-      </h2>
+      </h1>
      <Filter filter={filterBy} change={searchByName}/>
-      <h2>
+      <h1>
       Add New
-      </h2>
+      </h1>
      <PersonForm submission={addPerson} name={newName} nameChange={handleNameChange} number={newNumber} numberChange={handleNumberChange}/>
-      <h2>
+      <h1>
       Numbers
-      </h2>
-      <Persons persons={namesToShow}/>
+      </h1>
+      <Persons persons={namesToShow} deletePerson={removePerson}/>
     </div>
     
   );
