@@ -61,7 +61,10 @@ const App = () => {
         setTimeout(() => {
           setErrScssMsg(null)
         }, 3000)
-      });
+      })
+      .catch(error => {
+        console.log(error.response.data);
+      setErrScssMsg(`${error.response.data.error}`)});
 
 
     }

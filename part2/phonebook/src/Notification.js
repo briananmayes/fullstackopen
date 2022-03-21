@@ -17,7 +17,7 @@ const Notification = ({ message, name }) => {
     padding: 10,
     marginBottom: 10
   }
-    if (message === null) {
+    if (message === '') {
       return null
     }
     else if(message === `Added ${name} to phonebook`) {
@@ -28,7 +28,7 @@ const Notification = ({ message, name }) => {
         </div>
       )
     }
-    else if(message === `${name} has already been removed from the phonebook.` || message === 'Unable to get phonebook list from server...') {
+    else if(message === `${name} has already been removed from the phonebook.` || message === 'Unable to get phonebook list from server...' || message !== null) {
       
     return (
       <div style={ErrorStyle} className='error'>
