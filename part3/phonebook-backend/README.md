@@ -6,4 +6,4 @@ The code for the server can be found in the index.js file.
 The static frontend content is also hosted by the backend NodeJS Express server. 
 
 ## Demo
-The application can be viewed [here](https://fullstackopen-part3b-phonebook.herokuapp.com/api/persons)
+The application can be viewed [here](https://fullstackopen-part3b-phonebook.herokuapp.com/)
