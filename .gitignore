@@ -110,3 +110,5 @@ part1/package.json
 part1/package-lock.json
 part2/public/
 part2/src/
+part3/build
+part3/models

@@ -1,0 +1,11 @@
+DELETE http://localhost:3001/api/persons/1
+
+###
+
+POST https://fullstackopen-part3b-phonebook.herokuapp.com/api/persons
+Content-Type: application/json
+
+{
+   "name": "Lala Hellas",
+   "number": "7134717979"
+}
